@@ -1,0 +1,284 @@
+package USB::Descriptor::Interface;
+
+use strict;
+use warnings;
+use USB::Descriptor::Endpoint;
+
+our $VERSION = '1';
+
+use overload '@{}' => \&bytes;
+
+use constant fields => qw(
+    bLength bDescriptorType bInterfaceNumber bAlternateSetting bNumEndpoints
+    bInterfaceClass bInterfaceSubClass bInterfaceProtocol iInterface
+);
+
+=head1 NAME
+
+USB::Descriptor::Interface - USB Interface Descriptor
+
+=head1 VERSION
+
+Version 1
+
+=head1 SYNOPSIS
+
+An object representation of a USB interface descriptor.
+
+    use USB::Descriptor::Interface;
+
+    my $interface = USB::Descriptor::Interface->new( description => 'My First Interface' );
+    $interface->class(0);
+    $interface->subclass(0);
+    $interface->endpoints( [ USB::Descriptor::Endpoint->new() ] );
+    ...
+
+=head1 DESCRIPTION
+
+L<USB::Descriptor::Interface> represents a USB interface descriptor. When added
+to the descriptor tree of a L<USB::Descriptor::Device> object it can be used to
+generate the data structures needed to compile the firmware for a USB device.
+
+=head1 CONSTRUCTOR
+
+=over
+
+=item $interface = USB::Descriptor::Interface->new(description=>$description, ...);
+
+Constructs and returns a new L<USB::Descriptor::Interface> object using the
+passed options. Each option key is the name of an accessor method.
+
+=back
+
+=cut
+
+sub new
+{
+    my ($this, %options) = @_;
+    my $class = ref($this) || $this;
+    my $self =
+    {
+	'bAlternateSetting'	=> 0,
+	'bInterfaceClass'	=> 0,
+	'bInterfaceNumber'	=> 0,
+	'bInterfaceSubClass'	=> 0,
+	'bInterfaceProtocol'	=> 0,
+    };
+    bless $self, $class;
+
+    while( my ($key, $value) = each %options )
+    {
+	$self->$key($value);
+    }
+
+    return $self;
+}
+
+=head1 ARRAYIFICATION
+
+=over
+
+=item $interface->bytes (or @{$interface} )
+
+Returns an array of bytes containing all of the fields in the interface
+descriptor as well as all of the child endpoint descriptors.
+
+=back
+
+=cut
+
+sub bytes
+{
+    my $s = shift;
+
+    my @bytes;
+
+    push @bytes, 9;		# Interface descriptors are 9 bytes long
+    push @bytes, 0x04;				# bDescriptorType
+    push @bytes, $s->number;			# bInterfaceNumber
+    push @bytes, $s->alternate;			# bAlternateSetting
+
+    my $numEndpoints = defined($s->{'endpoints'}) ? @{$s->{'endpoints'}} : 0;
+    push @bytes, $numEndpoints;			# bNumEndpoints
+
+    push @bytes, $s->class;			# bInterfaceClass
+    push @bytes, $s->subclass;			# bInterfaceSubClass
+    push @bytes, $s->protocol;			# bInterfaceProtocol
+    my $stringIndex = defined($s->parent) ? $s->parent->index_for_string($s->description) : 0;
+    push @bytes, $stringIndex;			# iInterface
+
+    warn "Interface descriptor length is wrong" unless $bytes[0] == scalar @bytes;
+
+    # Append the endpoint descriptors
+    push @bytes, @{$_->bytes} for @{$s->{'endpoints'}};
+
+    return \@bytes;
+}
+
+=head1 ATTRIBUTES
+
+=over
+
+=item $interface->alternate
+
+Get/Set the alternate setting value (bAlternateSetting).
+
+=item $interface->class
+
+Get/Set the interface class (bInterfaceClass).
+
+=item $interface->description
+
+Get/Set the interface's description string. A string descriptor index (iInterface)
+will be automatically assigned when arrayified by L<USB::Descriptor::Configuration>.
+
+=item $interface->endpoints
+
+Get/Set the array of L<USB::Descriptor::Endpoint> objects. All of the endpoints
+in the passed array will be arrayified when the interface object is arrayified
+by L<USB::Descriptor::Configuration>.
+
+=item $interface->number
+
+Get/Set the interface's number (bInterfaceNumber).
+
+=item $interface->protocol
+
+Get/Set the interface's protocol (bInterfaceProtocol).
+
+=item $interface->subclass
+
+Get/Set the interface's SubClass (bInterfaceSubClass).
+
+=back
+
+=cut
+
+sub alternate
+{
+    my $s = shift;
+    $s->{'bAlternateSetting'} = int(shift) & 0xFF if scalar @_;
+    $s->{'bAlternateSetting'};
+}
+
+sub class
+{
+    my $s = shift;
+    $s->{'bInterfaceClass'} = int(shift) & 0xFF if scalar @_;
+    $s->{'bInterfaceClass'};
+}
+
+sub description
+{
+    my $s = shift;
+    $s->{'description'} = shift if scalar @_;
+    $s->{'description'};
+}
+
+sub endpoints
+{
+    my $s = shift;
+    if( scalar @_ )
+    {
+	$s->{'endpoints'} = shift;
+
+	# Reparent the new interface descriptors
+	$_->parent($s) for @{$s->{'endpoints'}};
+    }
+    $s->{'endpoints'};
+}
+
+sub number
+{
+    my $s = shift;
+    $s->{'bInterfaceNumber'} = int(shift) & 0xFF if scalar @_;
+    $s->{'bInterfaceNumber'};
+}
+
+sub protocol
+{
+    my $s = shift;
+    $s->{'bInterfaceProtocol'} = int(shift) & 0xFF if scalar @_;
+    $s->{'bInterfaceProtocol'};
+}
+
+sub subclass
+{
+    my $s = shift;
+    $s->{'bInterfaceSubClass'} = int(shift) & 0xFF if scalar @_;
+    $s->{'bInterfaceSubClass'};
+}
+
+# --- String Descriptor support ---
+
+# Called by children during arrayification
+sub index_for_string
+{
+    my ($s, $string) = @_;
+    if( defined($string) and length($string) and defined($s->parent) )
+    {
+	return $s->parent->index_for_string($string);
+    }
+    return 0;
+}
+
+# Get/Set the object parent
+sub parent
+{
+    my $s = shift;
+    $s->{'parent'} = shift if scalar(@_) && $_[0]->can('index_for_string');
+    $s->{'parent'};
+}
+
+1;
+
+=head1 AUTHOR
+
+Brandon Fosdick, C<< <bfoz at bfoz.net> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-usb-descriptor-interface at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=USB-Descriptor-Interface>.  I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc USB::Descriptor::Interface
+
+
+You can also look for information at:
+
+=over 4
+
+=item * RT: CPAN's request tracker (report bugs here)
+
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=USB-Descriptor-Interface>
+
+=item * AnnoCPAN: Annotated CPAN documentation
+
+L<http://annocpan.org/dist/USB-Descriptor-Interface>
+
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/USB-Descriptor-Interface>
+
+=item * Search CPAN
+
+L<http://search.cpan.org/dist/USB-Descriptor-Interface/>
+
+=back
+
+
+=head1 ACKNOWLEDGEMENTS
+
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2011 Brandon Fosdick.
+
+This program is released under the terms of the BSD License.
+
+=cut
