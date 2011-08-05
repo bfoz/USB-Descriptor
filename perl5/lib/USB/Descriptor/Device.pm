@@ -329,9 +329,21 @@ sub version
 sub configurations
 {
     my $s = shift;
-    if( scalar @_ )
+    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
     {
-	$s->{'configurations'} = shift;
+	# Convert hash reference arguments into Configuration objects
+	my @configurations = map
+	{
+	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    {
+		USB::Descriptor::Configuration->new(%{$_});
+	    }
+	    elsif( ref($_) )		# Reference to something else?
+	    {
+		$_;	# Use it
+	    }
+	} @{$_[0]};
+	$s->{'configurations'} = \@configurations;
 
 	# Reparent the new configuration descriptors
 	$_->parent($s) for @{$s->{'configurations'}};

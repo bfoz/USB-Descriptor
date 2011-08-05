@@ -174,9 +174,21 @@ sub description
 sub interfaces
 {
     my $s = shift;
-    if( scalar @_ )
+    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
     {
-	$s->{'interfaces'} = shift;
+	# Convert hash reference arguments into Interface objects
+	my @interfaces = map
+	{
+	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    {
+		USB::Descriptor::Interface->new(%{$_});
+	    }
+	    elsif( ref($_) )		# Reference to something else?
+	    {
+		$_;	# Use it
+	    }
+	} @{$_[0]};
+	$s->{'interfaces'} = \@interfaces;
 
 	# Reparent the new interface descriptors
 	$_->parent($s) for @{$s->{'interfaces'}};

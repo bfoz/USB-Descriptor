@@ -178,9 +178,21 @@ sub description
 sub endpoints
 {
     my $s = shift;
-    if( scalar @_ )
+    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
     {
-	$s->{'endpoints'} = shift;
+	# Convert hash reference arguments into Endpoint objects
+	my @endpoints = map
+	{
+	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    {
+		USB::Descriptor::Endpoint->new(%{$_});
+	    }
+	    elsif( ref($_) )		# Reference to something else?
+	    {
+		$_;	# Use it
+	    }
+	} @{$_[0]};
+	$s->{'endpoints'} = \@endpoints;
 
 	# Reparent the new interface descriptors
 	$_->parent($s) for @{$s->{'endpoints'}};
