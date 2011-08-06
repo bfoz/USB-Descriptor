@@ -1,5 +1,6 @@
 Build.PL
 Changes
+lib/USB/Descriptor.pm
 lib/USB/Descriptor/Configuration.pm
 lib/USB/Descriptor/Device.pm
 lib/USB/Descriptor/Endpoint.pm

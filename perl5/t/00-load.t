@@ -1,8 +1,9 @@
 #!perl -T
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 BEGIN {
+    use_ok( 'USB::Descriptor' ) || print "Bail out!\n";
     use_ok( 'USB::Descriptor::Device' ) || print "Bail out!\n";
     use_ok( 'USB::Descriptor::Interface' ) || print "Bail out!\n";
     use_ok( 'USB::Descriptor::Configuration' ) || print "Bail out!\n";
