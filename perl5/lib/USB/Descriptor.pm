@@ -117,6 +117,14 @@ of strings.
 
 =over
 
+=item $device = USB::Descriptor::composite(vendorID=>$vendorID, ...);
+
+Convience method for creating descriptors for Composite devices.
+
+Constructs and returns a new L<USB::Descriptor::Device> object using the
+passed options and sets C<class>, C<subclass>, and C<protocol> to zero. Each
+option key is the name of an accessor method of L<USB::Descriptor::Device>.
+
 =item $device = USB::Descriptor::device(vendorID=>$vendorID, ...);
 
 Constructs and returns a new L<USB::Descriptor::Device> object using the
@@ -126,6 +134,17 @@ L<USB::Descriptor::Device>.
 =back
 
 =cut
+
+sub composite
+{
+    my %options = @_;		# Hijack the passed options
+
+    $options{'class'} = 0;	# Forcefully configure for a composite device
+    $options{'subclass'} = 0;
+    $options{'protocol'} = 0;
+
+    return device(%options);
+}
 
 sub device
 {
