@@ -10,4 +10,4 @@ BEGIN {
     use_ok( 'USB::Descriptor::Endpoint' ) || print "Bail out!\n";
 }
 
-diag( "Testing USB::Descriptor::Device $USB::Descriptor::Device::VERSION, Perl $], $^X" );
+diag( "Testing USB::Descriptor $USB::Descriptor::VERSION, Perl $], $^X" );
