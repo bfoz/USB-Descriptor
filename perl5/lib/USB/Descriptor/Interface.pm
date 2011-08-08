@@ -109,6 +109,9 @@ sub bytes
 
     warn "Interface descriptor length is wrong" unless $bytes[0] == scalar @bytes;
 
+    # Append the Class Descriptor, if one is available
+    push @bytes, @{$s->class_descriptor->bytes} if( ref($s->class_descriptor) );
+
     # Append the endpoint descriptors
     push @bytes, @{$_->bytes} for @{$s->{'endpoints'}};
 
@@ -126,6 +129,10 @@ Get/Set the alternate setting value (bAlternateSetting).
 =item $interface->class
 
 Get/Set the interface class (bInterfaceClass).
+
+=item $interface->class_descriptor
+
+Get/Set the interface class descriptor object reference.
 
 =item $interface->description
 
@@ -166,6 +173,13 @@ sub class
     my $s = shift;
     $s->{'bInterfaceClass'} = int(shift) & 0xFF if scalar @_;
     $s->{'bInterfaceClass'};
+}
+
+sub class_descriptor
+{
+    my $s = shift;
+    $s->{'class_descriptor'} = shift if @_ and ref($_[0]);
+    $s->{'class_descriptor'};
 }
 
 sub description
