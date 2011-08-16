@@ -12,7 +12,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
-        'perl' => 5.006,
+        'perl' => 5.010,
     },
     add_to_cleanup      => [ 'USB-Descriptor-Device-*' ],
     create_makefile_pl => 'traditional',
