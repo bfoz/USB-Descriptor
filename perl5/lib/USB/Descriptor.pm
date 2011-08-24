@@ -69,7 +69,7 @@ L<USB::Descriptor::Endpoint>. Each descriptor object is configured using the
 provided arguments and added to the descriptor tree.
 
 Values for the device descriptor structure can be obtained by calling
-C<$device->bytes>, or by using arrayification ( C<@{$device}> ).
+C<< $device->bytes >>, or by using arrayification ( C<@{$device}> ).
 
     my @bytes = $device->bytes
 
@@ -101,7 +101,7 @@ When calling C<bytes>, or arrayifying a L<USB::Descriptor::Device>, all of the
 child objects are queried for their strings. The resulting strings are
 automatically assigned string indexes and assembled into a string descriptor set.
 The set of assembled strings can be retrieved as an array, in index order, by
-calling C<$device->strings>. The first string in the array is the string that
+calling C<< $device->strings >>. The first string in the array is the string that
 should be returned by the device in response to a request for string ID 1.
 
     my @strings = $device->strings

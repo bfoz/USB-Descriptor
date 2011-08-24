@@ -35,7 +35,7 @@ An object representation of a USB device descriptor.
 
 L<USB::Descriptor::Device> represents a USB device descriptor. After creating
 and configuring an instanace of L<USB::Descriptor::Device>, arrayification (or
-C<$device->bytes>) yeilds an array of all of the values that comprise the fields
+C<< $device->bytes >>) yeilds an array of all of the values that comprise the fields
 of a USB Device Descriptor structure given the configured settings. The
 resulting array can then be used to generate the structures (in Assembly or
 C or...) necessary for building the firmware of the described device.
