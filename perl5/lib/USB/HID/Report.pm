@@ -12,10 +12,6 @@ our $VERSION = '1';
 
 USB::HID::Report - USB HID Report
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 An object representation of a USB HID Report.

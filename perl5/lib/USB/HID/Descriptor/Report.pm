@@ -55,10 +55,6 @@ our %collection_type = (
 
 USB::HID::Descriptor::Report - USB Device Descriptor
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 Methods for generating USB HID Report Descriptor items

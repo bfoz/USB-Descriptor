@@ -16,10 +16,6 @@ use constant fields => qw(
 
 USB::Descriptor::Endpoint - USB Endpoint Descriptor
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 An object representation of a USB endpoint descriptor.

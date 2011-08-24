@@ -19,10 +19,6 @@ use constant fields => qw(
 
 USB::Descriptor::Device - USB Device Descriptor
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 An object representation of a USB device descriptor.

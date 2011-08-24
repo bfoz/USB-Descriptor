@@ -13,10 +13,6 @@ use overload '@{}' => \&bytes;
 
 USB::HID::Descriptor::Class - USB HID Class Descriptor
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 An object representation of a USB HID class descriptor.

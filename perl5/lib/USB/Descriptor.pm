@@ -10,10 +10,6 @@ our $VERSION = '1';
 
 USB::Descriptor - USB Device Descriptor generation tools
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 A set of classes and methods for generating USB descriptor sets.

@@ -10,10 +10,6 @@ our $VERSION = '1';
 
 USB::HID::Report::Field - USB HID Report Field
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 An object representation of a USB HID Report Field. L<USB::HID::Report::Field>

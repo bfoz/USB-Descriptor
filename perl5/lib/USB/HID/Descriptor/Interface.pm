@@ -12,10 +12,6 @@ our $VERSION = '1';
 
 USB::HID::Descriptor::Interface - USB HID Interface Descriptor
 
-=head1 VERSION
-
-Version 1
-
 =head1 SYNOPSIS
 
 An object representation of a USB HID interface descriptor. Subclass of
