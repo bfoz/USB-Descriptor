@@ -169,7 +169,14 @@ sub bytes
 =head1 MAIN ITEM ATTRIBUTES
 
 HID report B<Main Item>s have a number of attributes that can be set. Anything
-that isn't explicitly set defaults to 0.
+that isn't explicitly set defaults to 0. These attributes correspond to the
+names of the bits of the "Main Items" specified on page 28 of the
+L<Device Class Definition for Human Interface Devices Version 1.11|http://www.usb.org/developers/devclass_docs/HID1_11.pdf>.
+
+The attribute names accepted by C<set_attribute> are:
+
+    constant variable relative wrap nonlinear noprefered null volatile buffered
+    data array absolute nowrap linear preferred nonull nonvolatile bitfield
 
 =over
 
