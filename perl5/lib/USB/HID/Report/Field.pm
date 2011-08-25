@@ -225,8 +225,6 @@ sub set_attribute
 
 Sets C<size> to 1 and C<count> to C<$num_bits>. Returns C<count>,
 
-Get/Set the field's B<ReportCount> property.
-
 =item $field->count()
 
 Get/Set the field's B<ReportCount> property.

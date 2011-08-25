@@ -34,7 +34,7 @@ collected into a set of string descriptors by the top level
 L<USB::Descriptor::Device> object.
 
 The easiest way to create a new descriptor set is to use the
-C<USB::Descriptor::device()> factory method. It accepts a hash of arguments that
+L<USB::Descriptor::device()> factory method. It accepts a hash of arguments that
 happens to be the same hash expected by L<USB::Descriptor::Device> and returns
 a reference to a new L<USB::Descriptor::Device> object.
 
@@ -73,7 +73,7 @@ C<< $device->bytes >>, or by using arrayification ( C<@{$device}> ).
 
     my @bytes = $device->bytes
 
-    or
+or
 
     my @bytes = @{$device};
 
