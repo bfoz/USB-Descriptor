@@ -59,6 +59,10 @@ Constructs and returns a L<USB::HID::Report::Field> configured as a button.
 B<Usage Page> and B<ReportSize> are automatically set and override any
 corresponding arguments. Specify a B<Usage> to set the button number.
 
+Alternatively, a single scalar can be passed to set the button number:
+
+    $button = USB::HID::Report::Field->button(3);	# Button 3
+
 =item $padding = USB::HID::Report::Field->constant($num_bits);
 
 Constructs and returns a L<USB::HID::Report::Field> configured to be used as
@@ -93,6 +97,10 @@ sub new
 
 sub button
 {
+    # If a single scalar was passed, assume it's a button number and pass it
+    #  as the field's Usage
+    push @_, 'usage' => pop(@_) if( 2 == @_ );
+
     my $s = new(@_);
 
     $s->logical_range(0,1);	# Binary
