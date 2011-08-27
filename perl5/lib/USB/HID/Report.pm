@@ -32,7 +32,7 @@ structures needed to compile the firmware for a USB device.
 
 =over
 
-=item $interface = USB::HID::Report>new(reportID=>$reportID, ...);
+=item $interface = USB::HID::Report->new(reportID=>$reportID, ...);
 
 Constructs and returns a new L<USB::HID::Report> object using the passed
 options. Each option key is the name of an accessor method.
@@ -112,14 +112,18 @@ sub bytes
 
 =over
 
+=item $report->collection
+
+Get/Set the collection type used to enclose the report's items. Set to 'none' to
+use a bare report.
+
 =item $report->reportID
 
 Get/Set the report's ID. Defaults to 1.
 
-=item $report->direction
+=item $report->type
 
-Get/Set the report's direction ('input', 'output' or 'feature'). Defaults to
-'input'.
+Get/Set the report's type ('input', 'output' or 'feature'). Defaults to 'input'.
 
 =item $report->fields
 

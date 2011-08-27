@@ -107,6 +107,16 @@ sub bytes
 
 =over
 
+=item $interface->address
+
+Direct access to the bEndpointAddress value. Don't use this unless you know what
+you're doing.
+
+=item $interface->attributes
+
+Direct access to the bmAttributes value. Don't use this unless you know what
+you're doing.
+
 =item $interface->direction
 
 Get/Set the endpoint's direction (bEndpointAddress). Pass 'in' for an IN
@@ -298,20 +308,20 @@ sub usage_type
 
 # --- String Descriptor support ---
 
-sub index_for_string
+sub _index_for_string
 {
     my ($s, $string) = @_;
-    if( defined($string) and length($string) and defined($s->parent) )
+    if( defined($string) and length($string) and defined($s->_parent) )
     {
-	return $s->parent->index_for_string($string);
+	return $s->_parent->_index_for_string($string);
     }
     return 0;
 }
 
-sub parent
+sub _parent
 {
     my $s = shift;
-    $s->{'parent'} = shift if scalar(@_) && $_[0]->can('index_for_string');
+    $s->{'parent'} = shift if scalar(@_) && $_[0]->can('_index_for_string');
     $s->{'parent'};
 }
 

@@ -100,7 +100,7 @@ sub bytes
     push @bytes, $s->class;			# bInterfaceClass
     push @bytes, $s->subclass;			# bInterfaceSubClass
     push @bytes, $s->protocol;			# bInterfaceProtocol
-    my $stringIndex = defined($s->parent) ? $s->parent->index_for_string($s->description) : 0;
+    my $stringIndex = defined($s->_parent) ? $s->_parent->_index_for_string($s->description) : 0;
     push @bytes, $stringIndex;			# iInterface
 
     warn "Interface descriptor length is wrong" unless $bytes[0] == scalar @bytes;
@@ -205,7 +205,7 @@ sub endpoints
 	$s->{'endpoints'} = \@endpoints;
 
 	# Reparent the new interface descriptors
-	$_->parent($s) for @{$s->{'endpoints'}};
+	$_->_parent($s) for @{$s->{'endpoints'}};
     }
     $s->{'endpoints'};
 }
@@ -234,21 +234,21 @@ sub subclass
 # --- String Descriptor support ---
 
 # Called by children during arrayification
-sub index_for_string
+sub _index_for_string
 {
     my ($s, $string) = @_;
-    if( defined($string) and length($string) and defined($s->parent) )
+    if( defined($string) and length($string) and defined($s->_parent) )
     {
-	return $s->parent->index_for_string($string);
+	return $s->_parent->_index_for_string($string);
     }
     return 0;
 }
 
 # Get/Set the object parent
-sub parent
+sub _parent
 {
     my $s = shift;
-    $s->{'parent'} = shift if scalar(@_) && $_[0]->can('index_for_string');
+    $s->{'parent'} = shift if scalar(@_) && $_[0]->can('_index_for_string');
     $s->{'parent'};
 }
 

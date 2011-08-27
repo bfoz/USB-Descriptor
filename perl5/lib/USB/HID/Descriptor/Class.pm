@@ -107,9 +107,18 @@ sub bytes
 
 =over
 
+=item $class->bcdHID
+
+Direct access to the B<bcdHID> value. Don't use this unless you know what you're
+doing.
+
 =item $class->country
 
 Get/Set the country code for localized hardware (bCountryCode). Defaults to 0.
+
+=item $class->report_bytes
+
+Returns an array of bytes containing the report descriptor.
 
 =item $class->reports
 
@@ -130,7 +139,7 @@ sub bcdHID
     $s->{'bcdHID'};
 }
 
-sub sanitize_bcd_array
+sub _sanitize_bcd_array
 {
     my @v = @_;
     @v = map(int, @v);			# Force integers
@@ -234,7 +243,7 @@ sub version
 	{
 	    @v = @_;
 	}
-	@v = sanitize_bcd_array(@v);
+	@v = _sanitize_bcd_array(@v);
 
 	$s->{'bcdHID'} = ($v[0] << 8) | ($v[1] << 4) | $v[2];
 	$s->{'version'} = \@v;

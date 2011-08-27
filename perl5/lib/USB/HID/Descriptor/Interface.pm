@@ -42,6 +42,11 @@ Constructs and returns a new L<USB::HID::Descriptor::Interface> object using the
 passed options. Each option key is the name of an accessor method. The C<class>
 option is overriden.
 
+=item $interface = USB::HID::Descriptor::Interface->convert($another_interface)
+
+Converts a L<USB::Descriptor::Interface> object into a
+L<USB::HID::Descriptor::Interface> object and returns it.
+
 =back
 
 =cut
@@ -79,9 +84,21 @@ sub convert
 
 =over
 
+=item $interface->class
+
+Returns the interface's class (bInterfaceClass). No setting allowed.
+
+=item $interface->class_descriptor
+
+Returns the current class descriptor object. No setting allowed.
+
 =item $interface->country
 
 Get/Set the country code for localized hardware (bCountryCode). Defaults to 0.
+
+=item $class->report_bytes
+
+Returns an array of bytes containing the report descriptor.
 
 =item $interface->reports
 

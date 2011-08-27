@@ -130,9 +130,9 @@ sub bytes
     push @bytes, ($s->bcdDevice >> 8) & 0xFF;	# bcdDevice high
 
     # Make string descriptor indices
-    push @bytes, $s->index_for_string($s->manufacturer);    # iManufacturer
-    push @bytes, $s->index_for_string($s->product);	    # iProduct
-    push @bytes, $s->index_for_string($s->serial_number);   # iSerialNumber
+    push @bytes, $s->_index_for_string($s->manufacturer);    # iManufacturer
+    push @bytes, $s->_index_for_string($s->product);	    # iProduct
+    push @bytes, $s->_index_for_string($s->serial_number);   # iSerialNumber
 
     my $numConfigurations = $s->{'configurations'} ? @{$s->{'configurations'}} : 0;
     push @bytes, $numConfigurations;		# bNumConfigurations
@@ -145,6 +145,16 @@ sub bytes
 =head1 ATTRIBUTES
 
 =over
+
+=item $interface->bcdDevice
+
+Direct access to the bcdDevice value. Don't use this unless you know what you're
+doing.
+
+=item $interface->bcdUSB
+
+Direct access to the bcdUSB value. Don't use this unless you know what you're
+doing.
 
 =item $device->class
 
@@ -181,6 +191,10 @@ Get/Set the device's protocol (bDeviceProtocol).
 
 Get/Set the device's serial number string. A string descriptor index
 (iSerialNumber) will be automatically assigned during arrayification.
+
+=item $device->strings
+
+Returns an array of strings in index order from the string descriptor set.
 
 =item $device->subclass
 
@@ -260,7 +274,7 @@ sub bcdDevice
     $s->{'bcdDevice'};
 }
 
-sub sanitize_bcd_array
+sub _sanitize_bcd_array
 {
     my @v = @_;
     @v = map(int, @v);			# Force integers
@@ -291,7 +305,7 @@ sub usb_version
 	{
 	    @v = @_;
 	}
-	@v = sanitize_bcd_array(@v);
+	@v = _sanitize_bcd_array(@v);
 
 	$s->{'bcdUSB'} = ($v[0] << 8) | ($v[1] << 4) | $v[2];
 	$s->{'usb_version'} = \@v;
@@ -314,7 +328,7 @@ sub version
 	{
 	    @v = @_;
 	}
-	@v = sanitize_bcd_array(@v);
+	@v = _sanitize_bcd_array(@v);
 
 	$s->{'bcdDevice'} = ($v[0] << 8) | ($v[1] << 4) | $v[2];
 	$s->{'device_version'} = \@v;
@@ -342,7 +356,7 @@ sub configurations
 	$s->{'configurations'} = \@configurations;
 
 	# Reparent the new configuration descriptors
-	$_->parent($s) for @{$s->{'configurations'}};
+	$_->_parent($s) for @{$s->{'configurations'}};
     }
     $s->{'configurations'};
 }
@@ -383,10 +397,9 @@ sub strings
     # Walk configurations...
 
     return sort { $s->{'strings'}{$a} <=> $s->{'strings'}{$b} } keys %{$s->{'strings'}};
-#    return $s->{'strings'};
 }
 
-sub index_for_string
+sub _index_for_string
 {
     my ($s, $string) = @_;
     if( defined($string) and length($string) )

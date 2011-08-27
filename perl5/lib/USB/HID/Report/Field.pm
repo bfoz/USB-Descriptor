@@ -137,7 +137,7 @@ to avoid repeating items that have been emitted by previous fields.
 
 =cut
 
-sub should_emit
+sub _should_emit
 {
     my ($state, $tag, $value) = @_;
     if( defined($value) )
@@ -148,11 +148,11 @@ sub should_emit
     else { 0 }
 }
 
-sub emit_item
+sub _emit_item
 {
     my ($state, $tag, $value) = @_;
     my $type = USB::HID::Descriptor::Report::item_type($tag);
-    if( should_emit($state->{$type}, $tag, $value) )
+    if( _should_emit($state->{$type}, $tag, $value) )
     {
 	$state->{$type}{$tag} = $value;
 	USB::HID::Descriptor::Report::item($tag, $value);
@@ -165,11 +165,11 @@ sub bytes
     my ($s, $state) = @_;
 
     (
-	emit_item($state, 'logical_minimum', $s->logical_min),
-	emit_item($state, 'logical_maximum', $s->logical_max),
-	emit_item($state, 'report_count', $s->count),
-	emit_item($state, 'report_size', $s->size),
-	emit_item($state, 'usage', $s->usage),
+	_emit_item($state, 'logical_minimum', $s->logical_min),
+	_emit_item($state, 'logical_maximum', $s->logical_max),
+	_emit_item($state, 'report_count', $s->count),
+	_emit_item($state, 'report_size', $s->size),
+	_emit_item($state, 'usage', $s->usage),
 	USB::HID::Descriptor::Report::item($state->{'main'}, $s->attributes),
     )
 }
