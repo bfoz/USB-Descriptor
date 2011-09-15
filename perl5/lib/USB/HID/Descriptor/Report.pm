@@ -165,6 +165,18 @@ sub item
 	    return (tag($tag, $data_size), $data);
 	}
     }
+
+    # Split large data elements into individual bytes
+    my @b;
+    @_ = map {
+	@b = ();
+	do {
+	    push @b, $_ & 0xFF;
+	    $_ >>= 8;
+	} while( data_size($_) > 1 );
+	@b;
+    } @_;
+
     (tag($tag, data_size(@_)), @_);
 }
 
