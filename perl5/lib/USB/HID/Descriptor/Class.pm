@@ -52,9 +52,10 @@ sub new
 
     # Set defaults
     my $self = {
-        'bcdHID'	    => 0x0110,	# HID 1.1.0
+        'bcdHID'	    => 0x01B0,	# HID 1.11.0
 	'bCountryCode'	    => 0,	# Non-localized
-	'version'	    => [1,1,0],	# HID 1.1.0
+	'page'		    => 0,	# Undefined
+	'version'	    => [1,11,0],	# HID 1.11.0
 	'reports'	    => [],
 	'usage'			=> 0,	# Undefined
     };
