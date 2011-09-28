@@ -258,7 +258,9 @@ sub version
 
 =item $class->page
 
-Get/Set the B<Usage Page> of the interface's report descriptor.
+Get/Set the B<Usage Page> of the interface's report descriptor. Accepts integer
+values, or any of the B<Usage Page> string constants defined in
+HID/Descriptor/Report.pm.
 
 =item $class->usage
 
@@ -271,7 +273,7 @@ Get/Set the B<Usage> of the interface's report descriptor.
 sub page
 {
     my $s = shift;
-    $s->{'page'} = int(shift) & 0xFFFF if scalar @_;
+    $s->{'page'} = shift if scalar @_;
     $s->{'page'};
 }
 

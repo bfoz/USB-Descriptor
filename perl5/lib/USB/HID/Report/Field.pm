@@ -289,7 +289,7 @@ Get/Set both C<usage_min> and C<usage_max>.
 sub page
 {
     my $s = shift;
-    $s->{'page'} = int(shift) & 0xFFFF if scalar @_;
+    $s->{'page'} = shift if scalar @_;
     $s->{'page'};
 }
 
