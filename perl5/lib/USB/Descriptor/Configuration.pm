@@ -106,7 +106,17 @@ sub bytes
     warn "Configuration descriptor length is wrong" unless $bytes[0] == scalar @bytes;
 
     # Append the interface descriptors
-    push @bytes, @{$_->bytes} for @{$s->{'interfaces'}};
+    my $i = 0;
+    for( @{$s->{'interfaces'}} )
+    {
+	# Set the interface number if it hasn't already been set
+	$_->number($i++) if $_->number <= $i;	# Use <= to force update of $i
+
+	# Update $i if the interface already has a higher number
+	$i = $_->number if $_->number > $i;
+
+	push @bytes, @{$_->bytes};
+    }
 
     # Update wTotalLength
     my $wTotalLength = scalar @bytes;
