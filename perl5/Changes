@@ -1,5 +1,12 @@
 Revision history for USB-Descriptor
 
+3	September 28, 2011
+        Fix interface number generation
+        Allow setting of HID Usage Pages using string constants
+        Set default HID version to 1.11
+        Fix handling of Vendor Specific Usage Pages
+        Shortcut notation for setting button numbers
+
 2       Aug 24 2011
         POD cleanup
         Added missing file HID/Report.pm

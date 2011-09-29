@@ -7,7 +7,7 @@ my $builder = Module::Build->new(
     module_name         => 'USB::Descriptor::Device',
     license             => 'bsd',
     dist_author         => q{Brandon Fosdick <bfoz@bfoz.net>},
-    dist_version        => '2',
+    dist_version        => '3',
     build_requires => {
         'Test::More' => 0,
     },
