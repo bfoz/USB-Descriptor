@@ -2,6 +2,7 @@ package USB::Descriptor::Endpoint;
 
 use strict;
 use warnings;
+use 5.010;	# Require perl 5.10 to enable the switch feature
 
 our $VERSION = '2'; # Bump this when the interface changes
 
@@ -187,13 +188,10 @@ sub direction
     if( scalar @_ )
     {
 	my $d = shift;
-	if( $d eq 'in' )
+	given($d)
 	{
-	    $s->{'address'} |= 0x80;	# Set the direction bit for IN
-	}
-	elsif( $d eq 'out' )
-	{
-	    $s->{'address'} &= ~0x80;	# Clear the direction bit for OUT
+	    when('in')	{ $s->{'address'} |= 0x80; }	# Set the direction bit for IN
+	    when('out')	{ $s->{'address'} &= ~0x80; }	# Clear the direction bit for OUT
 	}
     }
     ($s->{'address'} & 0x80) ? 'in' : 'out';
@@ -227,21 +225,12 @@ sub synchronization_type
     {
 	my $a = shift;
 	my $masked = $s->{'attributes'} & ~0x0C;
-	if( $a eq 'none' )
+	given($a)
 	{
-	    $s->{'attributes'} = $masked;
-	}
-	elsif( $a eq 'asynchronous' )
-	{
-	    $s->{'attributes'} = $masked | (0x01 << 2);
-	}
-	elsif( $a eq 'adaptive' )
-	{
-	    $s->{'attributes'} = $masked | (0x02 << 2);
-	}
-	elsif( $a eq 'synchronous' )
-	{
-	    $s->{'attributes'} = $masked | (0x03 << 2);
+	    when('none')	{ $s->{'attributes'} = $masked;	}
+	    when('asynchronous'){ $s->{'attributes'} = $masked | (0x01 << 2); }
+	    when('adaptive' )	{ $s->{'attributes'} = $masked | (0x02 << 2); }
+	    when('synchronous')	{ $s->{'attributes'} = $masked | (0x03 << 2); }
 	}
     }
 
