@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use USB::Descriptor::Configuration;
 
-our $VERSION = '1';
+our $VERSION = '2'; # Bump this when the interface changes
 
 
 use overload '@{}' => \&bytes;
@@ -159,6 +159,11 @@ doing.
 =item $device->class
 
 Get/Set the device class code (bDeviceClass).
+
+=item $interface->configuration
+
+A convenience method that wraps a single hash reference in an array and passes
+it to C<configurations()>.
 
 =item $device->configurations
 
@@ -336,27 +341,42 @@ sub version
     wantarray ? @{$s->{'device_version'}} : join('.',@{$s->{'device_version'}});
 }
 
+sub configuration
+{
+    my $s = shift;
+    $s->configurations([$_[0]]) if( scalar(@_) and (ref($_[0]) eq 'HASH') );
+    $s->{'configurations'}[0];
+}
+
 sub configurations
 {
     my $s = shift;
-    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
+    if( scalar @_ )
     {
-	# Convert hash reference arguments into Configuration objects
-	my @configurations = map
+	if( ref($_[0]) eq 'ARRAY' )
 	{
-	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    # Convert hash reference arguments into Configuration objects
+	    my @configurations = map
 	    {
-		USB::Descriptor::Configuration->new(%{$_});
-	    }
-	    elsif( ref($_) )		# Reference to something else?
-	    {
-		$_;	# Use it
-	    }
-	} @{$_[0]};
-	$s->{'configurations'} = \@configurations;
+		if( ref($_) eq 'HASH' )	# Hash reference?
+		{
+		    USB::Descriptor::Configuration->new(%{$_});
+		}
+		elsif( ref($_) )		# Reference to something else?
+		{
+		    $_;	# Use it
+		}
+	    } @{$_[0]};
+	    $s->{'configurations'} = \@configurations;
 
-	# Reparent the new configuration descriptors
-	$_->_parent($s) for @{$s->{'configurations'}};
+	    # Reparent the new configuration descriptors
+	    $_->_parent($s) for @{$s->{'configurations'}};
+	}
+	elsif( ref($_[0]) eq 'HASH' )
+	{
+	    # If a hash reference was passed, let configuration() handle it
+	    $s->configuration($_[0]);
+	}
     }
     $s->{'configurations'};
 }

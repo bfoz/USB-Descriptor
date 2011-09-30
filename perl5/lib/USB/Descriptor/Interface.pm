@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use USB::Descriptor::Endpoint;
 
-our $VERSION = '1';
+our $VERSION = '2'; # Bump this when the interface changes
 
 use overload '@{}' => \&bytes;
 
@@ -135,6 +135,11 @@ Get/Set the interface class descriptor object reference.
 Get/Set the interface's description string. A string descriptor index (iInterface)
 will be automatically assigned when arrayified by L<USB::Descriptor::Configuration>.
 
+=item $interface->endpoint
+
+A convenience method that wraps a single hash reference in an array and passes
+it to C<endpoints()>.
+
 =item $interface->endpoints
 
 Get/Set the array of L<USB::Descriptor::Endpoint> objects. All of the endpoints
@@ -185,27 +190,42 @@ sub description
     $s->{'description'};
 }
 
+sub endpoint
+{
+    my $s = shift;
+    $s->endpoints([$_[0]]) if( scalar(@_) and (ref($_[0]) eq 'HASH') );
+    $s->{'endpoints'}[0];
+}
+
 sub endpoints
 {
     my $s = shift;
-    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
+    if( scalar @_ )
     {
-	# Convert hash reference arguments into Endpoint objects
-	my @endpoints = map
+	if( ref($_[0]) eq 'ARRAY' )
 	{
-	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    # Convert hash reference arguments into Endpoint objects
+	    my @endpoints = map
 	    {
-		USB::Descriptor::Endpoint->new(%{$_});
-	    }
-	    elsif( ref($_) )		# Reference to something else?
-	    {
-		$_;	# Use it
-	    }
-	} @{$_[0]};
-	$s->{'endpoints'} = \@endpoints;
+		if( ref($_) eq 'HASH' )	# Hash reference?
+		{
+		    USB::Descriptor::Endpoint->new(%{$_});
+		}
+		elsif( ref($_) )		# Reference to something else?
+		{
+		    $_;	# Use it
+		}
+	    } @{$_[0]};
+	    $s->{'endpoints'} = \@endpoints;
 
-	# Reparent the new interface descriptors
-	$_->_parent($s) for @{$s->{'endpoints'}};
+	    # Reparent the new interface descriptors
+	    $_->_parent($s) for @{$s->{'endpoints'}};
+	}
+	elsif( ref($_[0]) eq 'HASH' )
+	{
+	    # If a hash reference was passed, let endpoint() handle it
+	    $s->endpoint($_[0]);
+	}
     }
     $s->{'endpoints'};
 }

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use USB::Descriptor::Interface;
 
-our $VERSION = '1';
+our $VERSION = '2'; # Bump this when the interface changes
 
 use overload '@{}' => \&bytes;
 
@@ -141,6 +141,11 @@ Get/Set the configuration's description string. A string descriptor index
 (iConfiguration) will be automatically assigned when arrayified by
 L<USB::Descriptor::Configuration>.
 
+=item $interface->interface
+
+A convenience method that wraps a single hash reference in an array and passes
+it to C<interfaces()>.
+
 =item $interface->interfaces
 
 Get/Set the array of L<USB::Descriptor::Interface> objects. All of the
@@ -182,27 +187,42 @@ sub description
     $s->{'description'};
 }
 
+sub interface
+{
+    my $s = shift;
+    $s->interfaces([$_[0]]) if( scalar(@_) and (ref($_[0]) eq 'HASH') );
+    $s->{'interfaces'}[0];
+}
+
 sub interfaces
 {
     my $s = shift;
-    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
+    if( scalar @_ )
     {
-	# Convert hash reference arguments into Interface objects
-	my @interfaces = map
+	if( ref($_[0]) eq 'ARRAY' )
 	{
-	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    # Convert hash reference arguments into Interface objects
+	    my @interfaces = map
 	    {
-		USB::Descriptor::Interface->new(%{$_});
-	    }
-	    elsif( ref($_) )		# Reference to something else?
-	    {
-		$_;	# Use it
-	    }
-	} @{$_[0]};
-	$s->{'interfaces'} = \@interfaces;
+		if( ref($_) eq 'HASH' )	# Hash reference?
+		{
+		    USB::Descriptor::Interface->new(%{$_});
+		}
+		elsif( ref($_) )		# Reference to something else?
+		{
+		    $_;	# Use it
+		}
+	    } @{$_[0]};
+	    $s->{'interfaces'} = \@interfaces;
 
-	# Reparent the new interface descriptors
-	$_->_parent($s) for @{$s->{'interfaces'}};
+	    # Reparent the new interface descriptors
+	    $_->_parent($s) for @{$s->{'interfaces'}};
+	}
+	elsif( ref($_[0]) eq 'HASH' )
+	{
+	    # If a hash reference was passed, let interface() handle it
+	    $s->interface($_[0]);
+	}
     }
     $s->{'interfaces'};
 }
