@@ -3,7 +3,7 @@ package USB::Descriptor::Endpoint;
 use strict;
 use warnings;
 
-our $VERSION = '1';
+our $VERSION = '2'; # Bump this when the interface changes
 
 use overload '@{}' => \&bytes;
 
@@ -42,6 +42,10 @@ generate the data structures needed to compile the firmware for a USB device.
 Constructs and returns a new L<USB::Descriptor::Endpoint> object using the
 passed options. Each option key is the name of an accessor method.
 
+When constructing endpoint objects, the endpoint direction and endpoint
+number can be specified with a single key/value pair. For example, you can use
+C<< new('in' => 3) >> instead of C<< new('direction' => 'in', 'number' => 3) >>.
+
 =back
 
 =cut
@@ -61,7 +65,16 @@ sub new
 
     while( my ($key, $value) = each %options )
     {
-	$self->$key($value);
+	# Handle the 'direction => number' shortcut for specifying endpoints
+	if( ($key eq 'in') or ($key eq 'out') )
+	{
+	    $self->direction($key);
+	    $self->number($value);
+	}
+	else
+	{
+	    $self->$key($value);
+	}
     }
 
     return $self;
