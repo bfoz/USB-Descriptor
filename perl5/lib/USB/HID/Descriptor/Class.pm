@@ -187,7 +187,7 @@ sub report_bytes
 	$reports{$reportID}{$type} = $_;
     }
 
-    for my $reportID (keys %reports)
+    for my $reportID (sort keys %reports)
     {
 	delete $state{'global'}{'report_id'};
 	for my $type (keys %{$reports{$reportID}} )
