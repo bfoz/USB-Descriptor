@@ -105,6 +105,7 @@ sub button
 
     $s->logical_range(0,1);	# Binary
     $s->page(9);	# Buttons
+    $s->count(1);	# Each button is a single bit
     $s->size(1);	# Each button is a single bit
     $s->set_attribute('variable');
 
