@@ -37,6 +37,10 @@ structures needed to compile the firmware for a USB device.
 Constructs and returns a new L<USB::HID::Report> object using the passed
 options. Each option key is the name of an accessor method.
 
+When constructing report objects, the report type and ID can be specified with a
+single key/value pair. For example, you can use C<< new('input' => 3) >> instead
+of C<< new('type' => 'input', 'reportID' => 3) >>.
+
 =back
 
 =cut
@@ -57,7 +61,16 @@ sub new
 
     while( my ($key, $value) = each %options )
     {
-	$self->$key($value);
+	# Handle the 'type => reportID' shortcut
+	if( ($key eq 'input') or ($key eq 'output') or ($key eq 'feature') )
+	{
+	    $self->type($key);
+	    $self->reportID($value);
+	}
+	else
+	{
+	    $self->$key($value);
+	}
     }
 
     return $self;
