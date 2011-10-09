@@ -4,7 +4,7 @@ use warnings;
 use Module::Build;
 
 my $builder = Module::Build->new(
-    module_name         => 'USB::Descriptor::Device',
+    module_name         => 'USB::Descriptor',
     license             => 'bsd',
     dist_author         => q{Brandon Fosdick <bfoz@bfoz.net>},
     dist_version        => '3',
@@ -15,7 +15,7 @@ my $builder = Module::Build->new(
     requires => {
         'perl' => 5.010,
     },
-    add_to_cleanup      => [ 'USB-Descriptor-Device-*' ],
+    add_to_cleanup      => [ 'USB-Descriptor-*' ],
     create_makefile_pl => 'traditional',
 );
 
