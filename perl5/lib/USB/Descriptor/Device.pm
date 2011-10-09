@@ -137,6 +137,18 @@ sub bytes
     my $numConfigurations = $s->{'configurations'} ? @{$s->{'configurations'}} : 0;
     push @bytes, $numConfigurations;		# bNumConfigurations
 
+    # Check that all of the configurations have a valid bConfigurationValue
+    #  Assign them sequentially for any that don't
+    my $i = 0;
+    for( @{$s->{'configurations'}} )
+    {
+	# Set the configuration value if it hasn't already been set
+	$_->value($i++) if $_->value <= $i;	# Use <= to force update of $i
+
+	# Update $i if the interface already has a higher number
+	$i = $_->value if $_->value > $i;
+    }
+
     print "Device descriptor length is wrong" unless $bytes[0] == scalar @bytes;
 
     return \@bytes;

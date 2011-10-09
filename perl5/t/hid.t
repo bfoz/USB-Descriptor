@@ -129,7 +129,7 @@ ok(0 == (grep { grep {scalar(@{$_->endpoints}) != 1} @{$_->interfaces} } @config
 	2,			# bDescriptorType = 0x02 (Configuration)
 	34, 0,			# wTotalLength low,high
 	1,			# bNumInterfaces
-	0,			# bConfigurationValue
+	1,			# bConfigurationValue
 	6,			# iConfiguration
 	128,			# bmAttributes
 	5,			# bMaxPower

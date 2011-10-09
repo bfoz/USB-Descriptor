@@ -107,7 +107,9 @@ ok(0 == (grep { grep {scalar(@{$_->endpoints}) != 1} @{$_->interfaces} } @config
 	    64, 0,	#	wMaxPacketSize low,high
 	    10		#	bInterval
     ],
-    [9, 2, 25, 0, 1, 0, 6, 128, 5, 9, 4, 0, 0, 1, 0, 0, 0, 7, 7, 5, 130, 0, 8, 0, 10]);
+    [9, 2, 25, 0, 1,
+    1,			# bConfigurationValue
+    6, 128, 5, 9, 4, 0, 0, 1, 0, 0, 0, 7, 7, 5, 130, 0, 8, 0, 10]);
 
 my @bytes = map { $_->bytes } @configurations;
 ok(@bytes ~~ @correct_bytes, 'bytes must be correct');

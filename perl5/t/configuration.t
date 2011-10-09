@@ -104,7 +104,7 @@ ok( scalar(@configurations) == 3, 'three configurations were specified');
     2,			# bDescriptorType = 0x02
     18, 0,		# wTotalLength low,high
     1,			# bNumInterfaces
-    0,			# bConfigurationValue
+    1,			# bConfigurationValue
     7,			# iConfiguration
     128,		# bmAttributes
     0,			# bMaxPower
@@ -122,7 +122,7 @@ ok( scalar(@configurations) == 3, 'three configurations were specified');
     2,			# bDescriptorType = 0x02
     18, 0,		# wTotalLength low,high
     1,			# bNumInterfaces
-    0,			# bConfigurationValue
+    2,			# bConfigurationValue
     9,			# iConfiguration
     128,		# bmAttributes
     0,			# bMaxPower

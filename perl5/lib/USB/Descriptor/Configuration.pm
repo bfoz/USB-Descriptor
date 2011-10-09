@@ -169,6 +169,10 @@ Get/Set the configuration's self-powered attribute (bmAttributes).
 
 Get/Set the configuration's configuration value (bConfigurationValue).
 
+If no value is specified, and the configuration has been added to a
+L<USB::Descriptor::Device>, a value will be automatically assigned by
+L<< USB::Descriptor::Device->bytes() >>.
+
 =back
 
 =cut
