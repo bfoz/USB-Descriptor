@@ -1,5 +1,13 @@
 Revision history for USB-Descriptor
 
+4	October 9, 2011
+	Auto-assign configuration values during arrayification
+	Endpoint constructor allows 'direction => number' shortcut
+	Allow a hash reference, instead of an array, for setting endpoints, interfaces, configurations and reports
+	Sort report descriptors by ReportID during arrayifications
+	HID buttons now set ReportCount
+	Report constructor allows 'type => reportID' shortcut
+
 3	September 28, 2011
         Fix interface number generation
         Allow setting of HID Usage Pages using string constants
