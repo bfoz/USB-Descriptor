@@ -48,7 +48,13 @@ my $device = USB::HID::Descriptor(
 	    'page'	    => 1,	# Generic Desktop
 	    'usage'	    => 2,
 	    'reports'	    => $reports,
-    	}],
+    	},
+	{
+	    'description'   => 'Interface 1',
+	    'page'	    => 'Button',
+	    'usage'	    => 0,	# Undefined
+	    'report'	    => { 'input' => 1, 'fields' => [ 'button' => 1 ] },
+	}],
     }],
 );
 
@@ -119,6 +125,21 @@ my @correct_bytes =
 	    192,	#  End Collection
 
 	192,		# End Collection
+    ],
+    [
+	5, 9,		# UsagePage(Buttons)
+	9, 0,		# Usage 0
+	161, 1,		# Collection(Application)
+	    161, 3,	#  Collection(Report)
+	    133, 1,	#  ReportID 1
+	    21, 0,	#  LogicalMin 0
+	    37, 1,	#  LogicalMax 1
+	    149, 1,	#  ReportCount 1
+	    117, 1,	#  ReportSize 1
+	    9, 1,	#  Usage 1
+	    129, 2,	#  Input (variable)
+	    192,	#  End Collection
+	192,	#  End Collection
     ]
 );
 

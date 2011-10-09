@@ -100,6 +100,11 @@ Get/Set the country code for localized hardware (bCountryCode). Defaults to 0.
 
 Returns an array of bytes containing the report descriptor.
 
+=item $interface->report
+
+A convenience method that wraps a single hash reference in an array and passes
+it to C<reports()>.
+
 =item $interface->reports
 
 Get/Set the array of C<USB::HID::Descriptor::Report> objects.
@@ -141,6 +146,13 @@ sub report_bytes
 {
     my $s = shift;
     $s->class_descriptor->report_bytes;
+}
+
+sub report
+{
+    my $s = shift;
+    $s->class_descriptor->report(@_) if @_;
+    $s->class_descriptor->report;
 }
 
 # Forward the call to the Class descriptor

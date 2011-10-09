@@ -5,7 +5,7 @@ use warnings;
 use USB::HID::Report;
 use USB::HID::Descriptor::Report;
 
-our $VERSION = '1';
+our $VERSION = '2'; # Bump this when the interface changes
 
 use overload '@{}' => \&bytes;
 
@@ -121,6 +121,11 @@ Get/Set the country code for localized hardware (bCountryCode). Defaults to 0.
 
 Returns an array of bytes containing the report descriptor.
 
+=item $class->report
+
+A convenience method that wraps a single hash reference in an array and passes
+it to C<reports()>.
+
 =item $class->reports
 
 Get/Set the array of L<USB::HID::Descriptor::Report> objects.
@@ -201,28 +206,43 @@ sub report_bytes
     \@bytes;
 }
 
+sub report
+{
+    my $s = shift;
+    $s->reports([$_[0]]) if( scalar(@_) and (ref($_[0]) eq 'HASH') );
+    $s->{'reports'}[0];
+}
+
 sub reports
 {
     my $s = shift;
-    if( scalar(@_) and (ref($_[0]) eq 'ARRAY') )
+    if( scalar(@_) )
     {
-	# Convert hash reference arguments into Report objects
-	my @reports = map
+	if( ref($_[0]) eq 'ARRAY' )
 	{
-	    if( ref($_) eq 'HASH' )	# Hash reference?
+	    # Convert hash reference arguments into Report objects
+	    my @reports = map
 	    {
-		USB::HID::Report->new(%{$_});
-	    }
-	    elsif( ref($_) eq 'ARRAY' )	# Array reference?
-	    {
-		# Scan the array for field specifiers and add them to a hash
-	    }
-	    elsif( ref($_) )		# Reference to something else?
-	    {
-		$_;	# Use it
-	    }
-	} @{$_[0]};
-	$s->{'reports'} = \@reports;
+		if( ref($_) eq 'HASH' )	# Hash reference?
+		{
+		    USB::HID::Report->new(%{$_});
+		}
+		elsif( ref($_) eq 'ARRAY' )	# Array reference?
+		{
+		    # Scan the array for field specifiers and add them to a hash
+		}
+		elsif( ref($_) )		# Reference to something else?
+		{
+		    $_;	# Use it
+		}
+	    } @{$_[0]};
+	    $s->{'reports'} = \@reports;
+	}
+	elsif( ref($_[0]) eq 'HASH' )
+	{
+	    # If a hash reference was passed, let report() handle it
+	    $s->report($_[0]);
+	}
     }
     $s->{'reports'};
 }
